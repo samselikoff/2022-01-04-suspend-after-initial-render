@@ -1,24 +1,26 @@
 import { createServer } from "miragejs";
 
-export function makeServer({ environment = "test" } = {}) {
+function makeServer({ environment = "test" } = {}) {
   let server = createServer({
     environment,
 
     routes() {
       this.get(
-        "/api/users",
+        "/api/messages",
         (schema, request) => {
-          return { users: [{ id: request.params.id }] };
+          return {
+            messages: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }],
+          };
         },
-        { timing: 1500 }
+        { timing: 1000 }
       );
 
       this.get(
-        "/api/user/:id",
+        "/api/messages/:id",
         (schema, request) => {
-          return { user: { id: request.params.id } };
+          return { message: { id: request.params.id } };
         },
-        { timing: 2000 }
+        { timing: 1500 }
       );
 
       this.namespace = "";
@@ -30,4 +32,11 @@ export function makeServer({ environment = "test" } = {}) {
   server.pretender.passthroughRequest = () => {};
 
   return server;
+}
+
+let isClient = typeof window !== "undefined";
+if (isClient && process.env.NODE_ENV === "development") {
+  if (!window.server) {
+    window.server = makeServer({ environment: "development" });
+  }
 }

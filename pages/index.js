@@ -1,68 +1,54 @@
-import { Suspense, useEffect, useState } from "react";
-import useSWR from "swr";
-
 export default function Home() {
-  let [userId, setUserId] = useState(1);
-
   return (
-    <Suspense fallback={<p>Splash screen</p>}>
-      <Sidebar onSelect={setUserId} />
-
-      <SuspendAfterInitialRender fallback={<p>Loading user...</p>}>
-        <Dashboard userId={userId} />
-      </SuspendAfterInitialRender>
-    </Suspense>
-  );
-}
-
-function Sidebar({ onSelect }) {
-  let { data } = useSWR(`/api/users`);
-
-  return (
-    <div>
-      <p>Sidebar ({data.users.length} users)</p>
-
-      <div>
-        <button onClick={() => onSelect(1)}>User 1</button>
-        <button onClick={() => onSelect(2)}>User 2</button>
-        <button onClick={() => onSelect(3)}>User 3</button>
-      </div>
+    <div className="flex justify-center w-full items-center">
+      <p className="text-zinc-500 text-2xl font-light">No Message Selected</p>
     </div>
   );
 }
 
-function Dashboard({ userId }) {
-  let { data } = useSWR(`/api/user/${userId}`);
+// import Link from "next/link";
+// import { Suspense, useEffect, useState } from "react";
+// import useSWR from "swr";
 
-  return (
-    <div>
-      <p>Dashboard</p>
-      <p>The user is {data.user.id}</p>
-    </div>
-  );
-}
+// export default function Home() {
+//   return (
+//     <Suspense fallback={<p>Splash screen</p>}>
+//       <div className="flex">
+//         <Sidebar />
 
-function SuspendAfterInitialRender({ fallback, children }) {
-  let [didRender, setDidRender] = useState(false);
+//         <SuspendAfterInitialRender fallback={<p>Loading user...</p>}>
+//           <Dashboard />
+//         </SuspendAfterInitialRender>
+//       </div>
+//     </Suspense>
+//   );
+// }
 
-  return (
-    <>
-      {didRender ? (
-        <Suspense fallback={fallback}>{children}</Suspense>
-      ) : (
-        <>
-          <DidRender onRender={() => setDidRender(true)} />
-          {children}
-        </>
-      )}
-    </>
-  );
-}
+// function Sidebar() {
+//   let { data } = useSWR(`/api/messages`);
 
-function DidRender({ onRender }) {
-  useEffect(() => {
-    onRender();
-  }, [onRender]);
+//   return (
+//     <div className="flex flex-col bg-gray-100">
+//       <p>All messages</p>
 
-  return null;
-}
+//       <div className="flex-1">
+//         {data.messages.map((message) => (
+//           <Link href={`/message/${message.id}`} key={message.id}>
+//             <a>Message {message.id}</a>
+//           </Link>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
+
+// function Dashboard({ userId }) {
+//   let { data } = useSWR(`/api/user/${userId}`);
+
+//   return (
+//     <div>
+//       <p>Dashboard</p>
+//       <p>The user is {data.user.id}</p>
+//     </div>
+//   );
+// }
