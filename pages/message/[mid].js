@@ -2,12 +2,11 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 export default function Message() {
-  const router = useRouter();
-  const { mid } = router.query;
-  let { data } = useSWR(`/api/messages/${mid}`);
+  let { query } = useRouter();
+  let { data } = useSWR(`/api/messages/${query.mid}`);
 
   return (
-    <div className="w-full p-8 overflow-y-scroll bg-zinc-900">
+    <div className="w-full p-8 overflow-y-scroll">
       <h1 className="text-2xl font-bold">{data.message.title}</h1>
 
       <div className="mt-6 space-y-2 text-zinc-400">

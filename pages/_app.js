@@ -2,7 +2,7 @@ import "tailwindcss/tailwind.css";
 import "../mirage";
 import useSWR, { SWRConfig } from "swr";
 import { Suspense, useEffect, useState } from "react";
-import SuspendAfterInitialRender from "../components/suspend-after-initial-render";
+import SuspenseAfterInitialRender from "../components/suspense-after-initial-render";
 import Spinner from "../components/spinner";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -36,9 +36,11 @@ function App({ Component, pageProps }) {
       <Suspense fallback={<Spinner />}>
         <Sidebar />
 
-        <SuspendAfterInitialRender fallback={<Spinner />}>
-          <Component {...pageProps} />
-        </SuspendAfterInitialRender>
+        <div className="flex w-full bg-zinc-900">
+          <SuspenseAfterInitialRender fallback={<Spinner />}>
+            <Component {...pageProps} />
+          </SuspenseAfterInitialRender>
+        </div>
       </Suspense>
     </div>
   );

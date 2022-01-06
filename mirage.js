@@ -34,7 +34,7 @@ function makeServer({ environment = "test" } = {}) {
             messages,
           };
         },
-        { timing: 1000 }
+        { timing: 750 }
       );
 
       this.get(
@@ -42,7 +42,7 @@ function makeServer({ environment = "test" } = {}) {
         (schema, request) => {
           return { message: messages.find((m) => m.id === +request.params.id) };
         },
-        { timing: 500 }
+        { timing: 1250 }
       );
 
       this.namespace = "";
