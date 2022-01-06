@@ -1,13 +1,19 @@
 import "tailwindcss/tailwind.css";
 import "../mirage";
 import useSWR, { SWRConfig } from "swr";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import SuspendAfterInitialRender from "../components/suspend-after-initial-render";
 import Spinner from "../components/spinner";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 export default function Wrapper(props) {
+  let [isInitialRender, setIsInitialRender] = useState(true);
+  useEffect(() => {
+    // I use this so I only have to worry about CSR.
+    setIsInitialRender(false);
+  }, []);
+
   return (
     <SWRConfig
       value={{
@@ -19,14 +25,14 @@ export default function Wrapper(props) {
         suspense: true,
       }}
     >
-      <App {...props} />
+      {!isInitialRender && <App {...props} />}
     </SWRConfig>
   );
 }
 
 function App({ Component, pageProps }) {
   return (
-    <div className="h-screen flex text-zinc-100 bg-zinc-800">
+    <div className="flex h-screen antialiased text-zinc-100 bg-zinc-800">
       <Suspense fallback={<Spinner />}>
         <Sidebar />
 
@@ -49,7 +55,7 @@ function Sidebar() {
         </a>
       </Link>
 
-      <div className="flex-1 px-3 pt-2 w-48 space-y-1">
+      <div className="flex-1 w-48 px-2 pt-2 space-y-1">
         {data.messages.map((message) => (
           <MessageLink message={message} key={message.id} />
         ))}
@@ -66,10 +72,14 @@ function MessageLink({ message }) {
     <Link href={`/message/${message.id}`}>
       <a
         className={`
-          ${active ? "bg-blue-600 text-blue-50" : "hover:bg-zinc-700"} 
-          block px-5 py-2 rounded`}
+          ${
+            active
+              ? "bg-blue-600 text-blue-50"
+              : "hover:bg-zinc-700/50 text-white"
+          } 
+          block px-2 py-2 rounded text-sm truncate`}
       >
-        Message {message.id}
+        {message.title}
       </a>
     </Link>
   );

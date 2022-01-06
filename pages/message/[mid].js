@@ -7,23 +7,13 @@ export default function Message() {
   let { data } = useSWR(`/api/messages/${mid}`);
 
   return (
-    <div className="flex justify-center w-full p-8">
-      <div className="bg-zinc-700 w-full p-8 rounded shadow space-y-4">
-        <p>Message {data.message.id}</p>
+    <div className="w-full p-8 overflow-y-scroll bg-zinc-900">
+      <h1 className="text-2xl font-bold">{data.message.title}</h1>
 
-        <p>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Odio
-          doloribus consequatur alias deleniti eaque illo natus vitae, corporis
-          pariatur? Consequatur, inventore unde facere veritatis ab voluptatum
-          impedit. Repudiandae, veritatis illo.
-        </p>
-
-        <p>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Odio
-          doloribus consequatur alias deleniti eaque illo natus vitae, corporis
-          pariatur? Consequatur, inventore unde facere veritatis ab voluptatum
-          impedit. Repudiandae, veritatis illo.
-        </p>
+      <div className="mt-6 space-y-2 text-zinc-400">
+        {data.message.body.split("\n").map((paragraph, i) => (
+          <p key={i}>{paragraph}</p>
+        ))}
       </div>
     </div>
   );
