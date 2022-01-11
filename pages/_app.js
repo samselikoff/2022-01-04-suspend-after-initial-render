@@ -6,6 +6,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Sidebar } from "../components/sidebar";
 import { useRouter } from "next/router";
 import Spinner from "../components/spinner";
+import SuspenseAfterInitialRender from "../components/suspense-after-initial-render";
 
 export default function Wrapper(props) {
   let [isInitialRender, setIsInitialRender] = useState(true);
@@ -45,7 +46,9 @@ function App({ Component, pageProps }) {
       <Suspense fallback={<Spinner />}>
         <Sidebar />
         <div className="flex w-full bg-zinc-900">
-          <Component {...pageProps} />
+          <SuspenseAfterInitialRender fallback={<Spinner />}>
+            <Component {...pageProps} />
+          </SuspenseAfterInitialRender>
         </div>
       </Suspense>
     </div>
