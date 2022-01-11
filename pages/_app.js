@@ -1,32 +1,41 @@
 import "tailwindcss/tailwind.css";
 import "../mirage";
-import useSWR, { SWRConfig } from "swr";
+import { SWRConfig } from "swr";
 import { Suspense, useEffect, useState } from "react";
-import SuspenseAfterInitialRender from "../components/suspense-after-initial-render";
-import Spinner from "../components/spinner";
-import Link from "next/link";
+import { ErrorBoundary } from "react-error-boundary";
+import { Sidebar } from "../components/sidebar";
 import { useRouter } from "next/router";
+import Spinner from "../components/spinner";
 
 export default function Wrapper(props) {
   let [isInitialRender, setIsInitialRender] = useState(true);
+  let router = useRouter();
   useEffect(() => {
     // I use this so I only have to worry about CSR.
-    setIsInitialRender(false);
-  }, []);
+    if (router.isReady) {
+      setIsInitialRender(false);
+    }
+  }, [router.isReady]);
 
   return (
-    <SWRConfig
-      value={{
-        fetcher: (...args) => {
-          return typeof window !== "undefined"
-            ? fetch(...args).then((res) => res.json())
-            : new Promise(() => {});
-        },
-        suspense: true,
-      }}
+    <ErrorBoundary
+      FallbackComponent={({ error }) => (
+        <p className="p-4 m-4 text-lg text-white bg-red-600">{error.message}</p>
+      )}
     >
-      {!isInitialRender && <App {...props} />}
-    </SWRConfig>
+      <SWRConfig
+        value={{
+          fetcher: (...args) => {
+            return typeof window !== "undefined"
+              ? fetch(...args).then((res) => res.json())
+              : new Promise(() => {});
+          },
+          suspense: true,
+        }}
+      >
+        {!isInitialRender && <App {...props} />}
+      </SWRConfig>
+    </ErrorBoundary>
   );
 }
 
@@ -35,54 +44,10 @@ function App({ Component, pageProps }) {
     <div className="flex h-screen antialiased text-zinc-100 bg-zinc-800">
       <Suspense fallback={<Spinner />}>
         <Sidebar />
-
         <div className="flex w-full bg-zinc-900">
-          <SuspenseAfterInitialRender fallback={<Spinner />}>
-            <Component {...pageProps} />
-          </SuspenseAfterInitialRender>
+          <Component {...pageProps} />
         </div>
       </Suspense>
     </div>
-  );
-}
-
-function Sidebar() {
-  let { data } = useSWR(`/api/messages`);
-
-  return (
-    <div className="flex flex-col border-r border-zinc-700">
-      <Link href="/">
-        <a className="block px-2 py-3 text-xs font-medium text-zinc-400 hover:text-zinc-200">
-          All messages
-        </a>
-      </Link>
-
-      <div className="flex-1 w-48 px-2 pt-2 space-y-1">
-        {data.messages.map((message) => (
-          <MessageLink message={message} key={message.id} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function MessageLink({ message }) {
-  let router = useRouter();
-  let active = router.asPath === `/message/${message.id}`;
-
-  return (
-    <Link href={`/message/${message.id}`}>
-      <a
-        className={`
-          ${
-            active
-              ? "bg-blue-600 text-blue-50"
-              : "hover:bg-zinc-700/50 text-white"
-          } 
-          block px-2 py-2 rounded text-sm truncate`}
-      >
-        {message.title}
-      </a>
-    </Link>
   );
 }

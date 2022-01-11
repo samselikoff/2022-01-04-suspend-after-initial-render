@@ -13,6 +13,7 @@
     "next": "^12.0.7",
     "react": "^18.0.0-rc.0-next-811634762-20220110",
     "react-dom": "^18.0.0-rc.0-next-811634762-20220110",
+    "react-error-boundary": "^3.1.4",
     "swr": "^1.1.2"
   },
   "devDependencies": {

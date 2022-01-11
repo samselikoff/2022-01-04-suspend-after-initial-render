@@ -1,11 +1,11 @@
 export default function Spinner(props) {
   return (
-    <div className="flex w-full justify-center items-center">
+    <div className="flex items-center justify-center w-full">
       <svg
         className="text-zinc-300"
         viewBox="0 0 2400 2400"
-        width={24}
-        height={24}
+        width={18}
+        height={18}
         {...props}
       >
         <g

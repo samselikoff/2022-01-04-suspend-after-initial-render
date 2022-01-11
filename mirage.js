@@ -34,7 +34,7 @@ function makeServer({ environment = "test" } = {}) {
             messages,
           };
         },
-        { timing: 750 }
+        { timing: 650 }
       );
 
       this.get(
@@ -42,7 +42,7 @@ function makeServer({ environment = "test" } = {}) {
         (schema, request) => {
           return { message: messages.find((m) => m.id === +request.params.id) };
         },
-        { timing: 1250 }
+        { timing: 1100 }
       );
 
       this.namespace = "";
@@ -52,6 +52,7 @@ function makeServer({ environment = "test" } = {}) {
 
   // Don't log passthrough
   server.pretender.passthroughRequest = () => {};
+  server.logging = false;
 
   return server;
 }
